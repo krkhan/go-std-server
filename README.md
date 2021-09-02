@@ -125,10 +125,12 @@ $ curl --data password=angryMonkey2 http://127.0.0.1:8080/hash
 2
 ```
 
+Sleep with one eye open, gripping your pillow tight:
 ```
 $ sleep 5
 ```
 
+Exit light:
 ```
 $ curl http://127.0.0.1:8080/hash/2
 ```
