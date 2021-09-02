@@ -142,4 +142,5 @@ k9w4qLUoXzJEUp6TXTL59Vhjq1g600F0Va9v/VLkNeegC7Oro7kh/AIMU20+RlnG4fBDdfmv9qY4NHc5
 * Better error reporting
   * Return something along the lines of "digest being calculated" when it's queued, instead of just saying "key not found" for all cases
   * Use appropriate HTTP status codes (instead of blanket-returning 400 in case of trouble)
+  * Add tests for the store
 
