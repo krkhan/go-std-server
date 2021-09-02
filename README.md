@@ -88,6 +88,8 @@ $ go-std-server [listen address (default ":8080")]
 2021/09/01 22:38:27 Handling GET /stats
 2021/09/01 22:38:37 Handling POST /hash
 2021/09/01 22:38:40 Handling GET /stats
+^C2021/09/01 22:38:41 Received signal 'interrupt', shutting down HTTP server
+2021/09/01 22:38:41 HTTP server terminated successfully
 ```
 
 ## Client Examples
@@ -115,6 +117,7 @@ Or, if the digest has been processed (default time: 5 seconds) you'll get its va
 ZEHhWB65gUlzdVwtDQArEyx+KVLzp/aTaRaPlBzYRIFj6vjFdqEb0Q5B8zVKCZ0vKbZPZklJz0Fd7su2A+gf7Q==
 ```
 
+Another example:
 ```
 $ curl --data password=angryMonkey2 http://127.0.0.1:8080/hash
 ```
