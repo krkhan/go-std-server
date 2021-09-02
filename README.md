@@ -181,6 +181,7 @@ While on the server side:
 ## Todo
 
 * Add security around digests (return digests to only those who queued them)
+* Do not return a key unless the digest has been processed and stored; while making sure the relevant digest isn't returned unless required delay has elapsed
 * Better error reporting
   * Return something along the lines of "digest being calculated" when it's queued, instead of just saying "key not found" for all cases
   * Use appropriate HTTP status codes (instead of blanket-returning 400 in case of trouble)
