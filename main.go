@@ -92,8 +92,10 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 			totalRequests := route.Stats.TotalRequests
 			averageTime := route.Stats.TotalTime / totalRequests
 			io.WriteString(w, fmt.Sprintf(`{"total": "%d", "average": "%d"}`, totalRequests, averageTime))
+			return
 		}
 	}
+	w.WriteHeader(http.StatusInternalServerError)
 }
 
 type ServerHandler struct {
