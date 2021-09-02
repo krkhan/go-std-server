@@ -59,8 +59,8 @@ func Serve(routes []Route, w http.ResponseWriter, r *http.Request) {
 				// But can be helpful for tracking more complex stats
 				route.Stats.StatsLock.Lock()
 				defer route.Stats.StatsLock.Unlock()
-				route.Stats.TotalRequests = atomic.AddUint64(&(route.Stats.TotalRequests), 1)
-				route.Stats.TotalTime = atomic.AddUint64(&(route.Stats.TotalTime), uint64(elapsedMicroseconds))
+				atomic.AddUint64(&(route.Stats.TotalRequests), 1)
+				atomic.AddUint64(&(route.Stats.TotalTime), uint64(elapsedMicroseconds))
 			}()
 			return
 		}
