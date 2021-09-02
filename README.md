@@ -39,37 +39,41 @@ Targets:
 $ make test
 ```
 ```
+go clean -testcache
 go test -v -race ./...
 === RUN   TestHTTPServer
 === RUN   TestHTTPServer/valid_request
     main_test.go:67: Making POST call to http://127.0.0.1:40162/hash with 20 bytes in body
-2021/09/01 22:29:30 Handling POST /hash
+2021/09/02 15:37:20 Handling POST /hash
 === RUN   TestHTTPServer/multiple_passwords
     main_test.go:67: Making POST call to http://127.0.0.1:40162/hash with 44 bytes in body
-2021/09/01 22:29:30 Handling POST /hash
-2021/09/01 22:29:30 Multiple (2) passwords provided
---- PASS: TestHTTPServer (0.50s)
+2021/09/02 15:37:20 Handling POST /hash
+2021/09/02 15:37:20 Multiple (2) passwords provided
+--- PASS: TestHTTPServer (0.01s)
     --- PASS: TestHTTPServer/valid_request (0.00s)
     --- PASS: TestHTTPServer/multiple_passwords (0.00s)
 === RUN   TestDelay
-2021/09/01 22:29:31 Handling POST /hash
-2021/09/01 22:29:31 Handling GET /hash key=1
-2021/09/01 22:29:31 Key not found: 1
-2021/09/01 22:29:36 Handling GET /hash key=1
---- PASS: TestDelay (5.51s)
+2021/09/02 15:37:20 Handling POST /hash
+2021/09/02 15:37:20 Handling GET /hash key=1
+2021/09/02 15:37:20 Key not found: 1
+2021/09/02 15:37:25 Handling GET /hash key=1
+--- PASS: TestDelay (5.01s)
 PASS
-ok      github.com/krkhan/go-std-server (cached)
+ok      github.com/krkhan/go-std-server 5.047s
 === RUN   TestRouter
-=== RUN   TestRouter/post_request_without_any_parameters
 === RUN   TestRouter/get_request_with_a_numeric_parameter
 === RUN   TestRouter/get_request_without_any_parameters
+=== RUN   TestRouter/post_request_without_any_parameters
 --- PASS: TestRouter (0.00s)
-    --- PASS: TestRouter/post_request_without_any_parameters (0.00s)
     --- PASS: TestRouter/get_request_with_a_numeric_parameter (0.00s)
     --- PASS: TestRouter/get_request_without_any_parameters (0.00s)
+    --- PASS: TestRouter/post_request_without_any_parameters (0.00s)
 PASS
-ok      github.com/krkhan/go-std-server/router  (cached)
-?       github.com/krkhan/go-std-server/store   [no test files]
+ok      github.com/krkhan/go-std-server/router  0.031s
+=== RUN   TestSha512DigestStore
+--- PASS: TestSha512DigestStore (10.05s)
+PASS
+ok      github.com/krkhan/go-std-server/store   10.099s
 ```
 
 ## Launching the server
@@ -180,5 +184,4 @@ While on the server side:
 * Better error reporting
   * Return something along the lines of "digest being calculated" when it's queued, instead of just saying "key not found" for all cases
   * Use appropriate HTTP status codes (instead of blanket-returning 400 in case of trouble)
-  * Add tests for the store
 
