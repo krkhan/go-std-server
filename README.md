@@ -2,6 +2,8 @@
 
 Example of a golang HTTP server built entirely using the standard library
 
+![no-deps](https://user-images.githubusercontent.com/697967/131789704-a2d6eb65-9d44-4d33-86d2-74c4e91e45f1.gif)
+
 ## Building
 
 ```
