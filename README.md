@@ -136,6 +136,15 @@ $ curl http://127.0.0.1:8080/hash/2
 k9w4qLUoXzJEUp6TXTL59Vhjq1g600F0Va9v/VLkNeegC7Oro7kh/AIMU20+RlnG4fBDdfmv9qY4NHc5rF7YTw==
 ```
 
+### Get statistics for the `POST /hash` endpoint
+```
+curl http://127.0.0.1:8080/stats
+```
+```
+{"total": "6", "average": "104"}
+```
+Please note that since the hashes are calculated asynchronously, the average is just for the time servicing the HTTP request that triggered the SHA512 calculation. In other words, the hash performance itself is not part of the stats. (Not sure about requirements here, it can easily be tweaked to measure hash performance instead.)
+
 ### Shutdown via GET request
 ```
 curl --verbose http://127.0.0.1:8080/shutdown
