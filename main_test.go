@@ -135,6 +135,9 @@ func TestDelay(t *testing.T) {
 	// for some reason it might generate a false negative
 
 	resp, err = http.Get(getHashUrl.String())
+	if err != nil {
+		t.Fatalf("Error getting HTTP response: %s", err)
+	}
 	respBody, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("Error reading response body: %s", err)
@@ -148,6 +151,9 @@ func TestDelay(t *testing.T) {
 	time.Sleep(Sha512DelaySeconds*time.Second + 1)
 
 	resp, err = http.Get(getHashUrl.String())
+	if err != nil {
+		t.Fatalf("Error getting HTTP response: %s", err)
+	}
 	respBody, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("Error reading response body: %s", err)

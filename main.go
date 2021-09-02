@@ -24,9 +24,9 @@ const (
 )
 
 func handleError(msg string, w http.ResponseWriter) {
-	log.Printf(msg)
+	log.Print(msg)
 	w.WriteHeader(http.StatusBadRequest)
-	io.WriteString(w, msg)
+	_, _ = io.WriteString(w, msg)
 }
 
 func postHash(w http.ResponseWriter, r *http.Request) {
@@ -56,7 +56,7 @@ func postHash(w http.ResponseWriter, r *http.Request) {
 	reqStore := r.Context().Value(store.Sha512DigestStoreContextKey{}).(*store.Sha512DigestStore)
 	newKey := reqStore.AddDigest(digest)
 
-	io.WriteString(w, fmt.Sprintf("%d", newKey))
+	_, _ = io.WriteString(w, fmt.Sprintf("%d", newKey))
 }
 
 func getHash(w http.ResponseWriter, r *http.Request) {
@@ -79,7 +79,7 @@ func getHash(w http.ResponseWriter, r *http.Request) {
 	}
 	b64Encoded := base64.StdEncoding.EncodeToString(digest[:])
 
-	io.WriteString(w, b64Encoded)
+	_, _ = io.WriteString(w, b64Encoded)
 }
 
 func getStats(w http.ResponseWriter, r *http.Request) {
@@ -91,7 +91,7 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 			defer route.Stats.StatsLock.RUnlock()
 			totalRequests := route.Stats.TotalRequests
 			averageTime := route.Stats.TotalTime / totalRequests
-			io.WriteString(w, fmt.Sprintf(`{"total": "%d", "average": "%d"}`, totalRequests, averageTime))
+			_, _ = io.WriteString(w, fmt.Sprintf(`{"total": "%d", "average": "%d"}`, totalRequests, averageTime))
 			return
 		}
 	}
@@ -163,7 +163,7 @@ func main() {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		_ = <-shutdownChan
+		<-shutdownChan
 		log.Printf("Received shutdown request, terminating self")
 
 		if err := server.Shutdown(context.Background()); err != nil {
