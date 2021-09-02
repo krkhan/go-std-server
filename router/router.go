@@ -55,6 +55,8 @@ func Serve(routes []Route, w http.ResponseWriter, r *http.Request) {
 			handlerEnd := time.Now()
 			elapsedMicroseconds := handlerEnd.Sub(handlerStart).Microseconds()
 			go func() {
+				// Probably not needed for the time being (stuff we are tracking can be atomically increased)
+				// But can be helpful for tracking more complex stats
 				route.Stats.StatsLock.Lock()
 				defer route.Stats.StatsLock.Unlock()
 				route.Stats.TotalRequests = atomic.AddUint64(&(route.Stats.TotalRequests), 1)
