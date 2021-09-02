@@ -86,7 +86,7 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 	log.Print("Handling GET /stats")
 	routes := r.Context().Value(RoutesContextKey{}).([]router.Route)
 	for _, route := range routes {
-		if route.Name == "postHash" {
+		if route.Name == "POST:hash" {
 			route.Stats.StatsLock.RLock()
 			defer route.Stats.StatsLock.RUnlock()
 			totalRequests := route.Stats.TotalRequests
@@ -111,13 +111,18 @@ func (h ServerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	router.Serve(h.Routes, w, r.WithContext(ctx))
 }
 
-func startHttpServer(wg *sync.WaitGroup, addr string) *http.Server {
+func startHttpServer(wg *sync.WaitGroup, addr string) (*http.Server, chan struct{}) {
+	shutdownChan := make(chan struct{})
 	digestsMap := make(map[uint64][sha512.Size]byte)
 	handler := ServerHandler{
 		Routes: []router.Route{
-			router.NewRoute("postHash", http.MethodPost, "/hash", postHash),
-			router.NewRoute("getHash", http.MethodGet, "/hash/([0-9]+)", getHash),
-			router.NewRoute("getStats", http.MethodGet, "/stats", getStats),
+			router.NewRoute("POST:hash", http.MethodPost, "/hash", postHash),
+			router.NewRoute("GET:hash", http.MethodGet, "/hash/([0-9]+)", getHash),
+			router.NewRoute("GET:stats", http.MethodGet, "/stats", getStats),
+			router.NewRoute("GET:shutdown", http.MethodGet, "/shutdown", func(w http.ResponseWriter, _ *http.Request) {
+				shutdownChan <- struct{}{}
+				w.WriteHeader(http.StatusOK)
+			}),
 		},
 		Store: &store.Sha512DigestStore{
 			Counter:      0,
@@ -139,7 +144,7 @@ func startHttpServer(wg *sync.WaitGroup, addr string) *http.Server {
 		}
 	}()
 
-	return server
+	return server, shutdownChan
 }
 
 func main() {
@@ -152,16 +157,25 @@ func main() {
 
 	serverExited := &sync.WaitGroup{}
 	serverExited.Add(1)
-	server := startHttpServer(serverExited, serverAddr)
+	server, shutdownChan := startHttpServer(serverExited, serverAddr)
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
+		_ = <-shutdownChan
+		log.Printf("Received shutdown request, terminating self")
+
+		if err := server.Shutdown(context.Background()); err != nil {
+			panic(err)
+		}
+	}()
+
+	go func() {
 		sig := <-sigs
 		log.Printf("Received signal '%s', shutting down HTTP server", sig)
 
-		if err := server.Shutdown(context.TODO()); err != nil {
+		if err := server.Shutdown(context.Background()); err != nil {
 			panic(err)
 		}
 	}()

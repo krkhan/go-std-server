@@ -136,6 +136,33 @@ $ curl http://127.0.0.1:8080/hash/2
 k9w4qLUoXzJEUp6TXTL59Vhjq1g600F0Va9v/VLkNeegC7Oro7kh/AIMU20+RlnG4fBDdfmv9qY4NHc5rF7YTw==
 ```
 
+### Shutdown via GET request
+```
+curl --verbose http://127.0.0.1:8080/shutdown
+```
+```
+*   Trying 127.0.0.1:8080...
+* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
+> GET /shutdown HTTP/1.1
+> Host: 127.0.0.1:8080
+> User-Agent: curl/7.74.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Date: Thu, 02 Sep 2021 06:46:50 GMT
+< Content-Length: 0
+<
+* Connection #0 to host 127.0.0.1 left intact
+```
+
+While on the server side:
+```
+2021/09/01 23:46:48 Launching HTTP server on :8080
+2021/09/01 23:46:50 Received shutdown request, terminating self
+2021/09/01 23:46:50 HTTP server terminated successfully
+```
+
 ## Todo
 
 * Add security around digests (return digests to only those who queued them)

@@ -24,7 +24,7 @@ func TestHTTPServer(t *testing.T) {
 	serverAddr := fmt.Sprintf("127.0.0.1:%d", (rand.Uint32()%1000)+40000)
 	httpServerExitDone := &sync.WaitGroup{}
 	httpServerExitDone.Add(1)
-	server := startHttpServer(httpServerExitDone, serverAddr)
+	server, _ := startHttpServer(httpServerExitDone, serverAddr)
 
 	tests := map[string]struct {
 		method             string
@@ -91,10 +91,10 @@ func TestHTTPServer(t *testing.T) {
 }
 
 func TestDelay(t *testing.T) {
-	serverAddr := fmt.Sprintf("127.0.0.1:%d", 55000)
+	serverAddr := fmt.Sprintf("127.0.0.1:%d", (rand.Uint32()%1000)+40000)
 	httpServerExitDone := &sync.WaitGroup{}
 	httpServerExitDone.Add(1)
-	server := startHttpServer(httpServerExitDone, serverAddr)
+	server, _ := startHttpServer(httpServerExitDone, serverAddr)
 
 	postHashUrl, err := url.Parse(fmt.Sprintf("http://%s/hash", serverAddr))
 	if err != nil {
@@ -145,7 +145,7 @@ func TestDelay(t *testing.T) {
 		t.Fatalf(`Invalid response. Got: "%s", expected: "%s"`, respBody, expectedRespBody)
 	}
 
-	time.Sleep(Sha512DelaySeconds * time.Second + 1)
+	time.Sleep(Sha512DelaySeconds*time.Second + 1)
 
 	resp, err = http.Get(getHashUrl.String())
 	respBody, err = ioutil.ReadAll(resp.Body)
@@ -161,3 +161,4 @@ func TestDelay(t *testing.T) {
 		panic(err)
 	}
 }
+
