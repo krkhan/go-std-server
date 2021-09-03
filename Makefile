@@ -75,7 +75,12 @@ ifeq ($(EXPORT_RESULT), true)
 	GO111MODULE=off go get -u github.com/thomaspoignant/yamllint-checkstyle
 	$(eval OUTPUT_OPTIONS = | tee /dev/tty | yamllint-checkstyle > yamllint-checkstyle.xml)
 endif
+
+ifeq ($(shell find -name '*.yaml' | wc -l),0)
+	@echo "No yaml files found"
+else
 	docker run --rm -it -v $(shell pwd):/data cytopia/yamllint -f parsable $(shell git ls-files '*.yml' '*.yaml') $(OUTPUT_OPTIONS)
+endif
 
 ## Docker:
 docker-build: ## Use the dockerfile to build the container
