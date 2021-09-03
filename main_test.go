@@ -20,20 +20,70 @@ const (
 	contentType = "application/x-www-form-urlencoded"
 )
 
+type testCase struct {
+	serverAddr         string
+	method             string
+	url                string
+	body               []byte
+	expectedStatusCode int
+	expectedResponse   []byte
+}
+
+func executeHttpTestCase(t *testing.T, test *testCase) {
+	parsedUrl, err := url.Parse(fmt.Sprintf("http://%s/%s", test.serverAddr, test.url))
+	if err != nil {
+		t.Fatalf("Error parsing URL: %s", err)
+	}
+	var resp *http.Response
+	switch test.method {
+	case http.MethodGet:
+		t.Logf("Making GET call to %s", parsedUrl)
+		resp, err = http.Get(parsedUrl.String())
+		if err != nil {
+			t.Fatalf("Error making GET request: %s", err)
+		}
+	case http.MethodPost:
+		t.Logf("Making POST call to %s with %d bytes in body", parsedUrl, len(test.body))
+		resp, err = http.Post(parsedUrl.String(), contentType, bytes.NewBuffer(test.body))
+		if err != nil {
+			t.Fatalf("Error making POST request: %s", err)
+		}
+	default:
+		t.Fatalf("Cannot test with method: %s", test.method)
+	}
+	if resp.StatusCode != test.expectedStatusCode {
+		t.Fatalf("Did not get the expected status code (expected: %d, received: %d)", test.expectedStatusCode, resp.StatusCode)
+	}
+	responseBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("Error reading response body: %s", err)
+	}
+	if test.expectedResponse != nil && !bytes.Equal(responseBytes, test.expectedResponse) {
+		t.Fatalf("Did not get the expected response (expected: \"%s\", received: \"%s\")", test.expectedResponse, responseBytes)
+	}
+}
+
 func TestHTTPServer(t *testing.T) {
 	serverAddr := fmt.Sprintf("127.0.0.1:%d", (rand.Uint32()%1000)+40000)
 	httpServerExitDone := &sync.WaitGroup{}
 	httpServerExitDone.Add(1)
 	server, _ := startHttpServer(httpServerExitDone, serverAddr)
 
-	tests := map[string]struct {
-		method             string
-		url                string
-		body               []byte
-		expectedStatusCode int
-		expectedResponse   []byte
-	}{
-		"valid request": {
+	time.Sleep(3 * time.Second)
+
+	t.Run("stats request without any traffic", func(t *testing.T) {
+		executeHttpTestCase(t, &testCase{
+			serverAddr:         serverAddr,
+			method:             http.MethodGet,
+			url:                "stats",
+			expectedStatusCode: http.StatusOK,
+			expectedResponse:   []byte(`{"total": 0, "average": 0}`),
+		})
+	})
+
+	tests := map[string]testCase{
+		"valid hash request": {
+			serverAddr:         serverAddr,
 			method:             http.MethodPost,
 			url:                "hash",
 			body:               []byte(fmt.Sprintf("%s=angryMonkey", PasswordKey)),
@@ -41,6 +91,7 @@ func TestHTTPServer(t *testing.T) {
 			expectedResponse:   []byte("1"),
 		},
 		"multiple passwords": {
+			serverAddr:         serverAddr,
 			method:             http.MethodPost,
 			url:                "hash",
 			body:               []byte(fmt.Sprintf("%s=angryMonkey&%s=angrierPrimate", PasswordKey, PasswordKey)),
@@ -51,37 +102,7 @@ func TestHTTPServer(t *testing.T) {
 
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
-			parsedUrl, err := url.Parse(fmt.Sprintf("http://%s/%s", serverAddr, test.url))
-			if err != nil {
-				t.Fatalf("Error parsing URL: %s", err)
-			}
-			var resp *http.Response
-			switch test.method {
-			case http.MethodGet:
-				t.Logf("Making GET call to %s", parsedUrl)
-				resp, err = http.Get(parsedUrl.String())
-				if err != nil {
-					t.Fatalf("Error making GET request: %s", err)
-				}
-			case http.MethodPost:
-				t.Logf("Making POST call to %s with %d bytes in body", parsedUrl, len(test.body))
-				resp, err = http.Post(parsedUrl.String(), contentType, bytes.NewBuffer(test.body))
-				if err != nil {
-					t.Fatalf("Error making POST request: %s", err)
-				}
-			default:
-				t.Fatalf("Cannot test with method: %s", test.method)
-			}
-			if resp.StatusCode != test.expectedStatusCode {
-				t.Fatalf("Did not get the expected status code (expected: %d, received: %d)", test.expectedStatusCode, resp.StatusCode)
-			}
-			responseBytes, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				t.Fatalf("Error reading response body: %s", err)
-			}
-			if test.expectedResponse != nil && !bytes.Equal(responseBytes, test.expectedResponse) {
-				t.Fatalf("Did not get the expected response (expected: \"%s\", received: \"%s\")", test.expectedResponse, responseBytes)
-			}
+			executeHttpTestCase(t, &test)
 		})
 	}
 

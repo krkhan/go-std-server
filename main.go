@@ -90,8 +90,11 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 			route.Stats.StatsLock.RLock()
 			defer route.Stats.StatsLock.RUnlock()
 			totalRequests := route.Stats.TotalRequests
-			averageTime := route.Stats.TotalTime / totalRequests
-			_, _ = io.WriteString(w, fmt.Sprintf(`{"total": "%d", "average": "%d"}`, totalRequests, averageTime))
+			var averageTime uint64
+			if totalRequests > 0 {
+				averageTime = route.Stats.TotalTime / totalRequests
+			}
+			_, _ = io.WriteString(w, fmt.Sprintf(`{"total": %d, "average": %d}`, totalRequests, averageTime))
 			return
 		}
 	}

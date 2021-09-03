@@ -43,38 +43,69 @@ $ make test
 go clean -testcache
 go test -v -race ./...
 === RUN   TestHTTPServer
-=== RUN   TestHTTPServer/valid_request
-    main_test.go:67: Making POST call to http://127.0.0.1:40162/hash with 20 bytes in body
-2021/09/02 15:37:20 Handling POST /hash
+=== RUN   TestHTTPServer/stats_request_without_any_traffic
+    main_test.go:40: Making GET call to http://127.0.0.1:40162/stats
+2021/09/02 17:54:16 Handling GET /stats
+=== RUN   TestHTTPServer/valid_hash_request
+    main_test.go:46: Making POST call to http://127.0.0.1:40162/hash with 20 bytes in body
+2021/09/02 17:54:16 Handling POST /hash
 === RUN   TestHTTPServer/multiple_passwords
-    main_test.go:67: Making POST call to http://127.0.0.1:40162/hash with 44 bytes in body
-2021/09/02 15:37:20 Handling POST /hash
-2021/09/02 15:37:20 Multiple (2) passwords provided
---- PASS: TestHTTPServer (0.01s)
-    --- PASS: TestHTTPServer/valid_request (0.00s)
+    main_test.go:46: Making POST call to http://127.0.0.1:40162/hash with 44 bytes in body
+2021/09/02 17:54:16 Handling POST /hash
+2021/09/02 17:54:16 Multiple (2) passwords provided
+--- PASS: TestHTTPServer (0.50s)
+    --- PASS: TestHTTPServer/stats_request_without_any_traffic (0.00s)
+    --- PASS: TestHTTPServer/valid_hash_request (0.00s)
     --- PASS: TestHTTPServer/multiple_passwords (0.00s)
 === RUN   TestDelay
-2021/09/02 15:37:20 Handling POST /hash
-2021/09/02 15:37:20 Handling GET /hash key=1
-2021/09/02 15:37:20 Key not found: 1
-2021/09/02 15:37:25 Handling GET /hash key=1
---- PASS: TestDelay (5.01s)
+2021/09/02 17:54:17 Handling POST /hash
+2021/09/02 17:54:17 Handling GET /hash key=1
+2021/09/02 17:54:17 Key not found: 1
+2021/09/02 17:54:22 Handling GET /hash key=1
+--- PASS: TestDelay (5.51s)
 PASS
-ok      github.com/krkhan/go-std-server 5.047s
+ok      github.com/krkhan/go-std-server 6.056s
 === RUN   TestRouter
-=== RUN   TestRouter/get_request_with_a_numeric_parameter
 === RUN   TestRouter/get_request_without_any_parameters
 === RUN   TestRouter/post_request_without_any_parameters
+=== RUN   TestRouter/get_request_with_a_numeric_parameter
 --- PASS: TestRouter (0.00s)
-    --- PASS: TestRouter/get_request_with_a_numeric_parameter (0.00s)
     --- PASS: TestRouter/get_request_without_any_parameters (0.00s)
     --- PASS: TestRouter/post_request_without_any_parameters (0.00s)
+    --- PASS: TestRouter/get_request_with_a_numeric_parameter (0.00s)
 PASS
-ok      github.com/krkhan/go-std-server/router  0.031s
+ok      github.com/krkhan/go-std-server/router  0.032s
 === RUN   TestSha512DigestStore
---- PASS: TestSha512DigestStore (10.05s)
+--- PASS: TestSha512DigestStore (10.01s)
 PASS
-ok      github.com/krkhan/go-std-server/store   10.099s
+ok      github.com/krkhan/go-std-server/store   10.043s
+```
+
+You can get a coverage report via:
+
+```
+$ make coverage
+```
+
+```
+go test -cover -covermode=count -coverprofile=profile.cov ./...
+ok      github.com/krkhan/go-std-server 9.025s  coverage: 58.8% of statements
+ok      github.com/krkhan/go-std-server/router  0.013s  coverage: 73.1% of statements
+ok      github.com/krkhan/go-std-server/store   10.008s coverage: 100.0% of statements
+go tool cover -func profile.cov
+github.com/krkhan/go-std-server/main.go:26:             handleError     100.0%
+github.com/krkhan/go-std-server/main.go:32:             postHash        68.4%
+github.com/krkhan/go-std-server/main.go:62:             getHash         80.0%
+github.com/krkhan/go-std-server/main.go:85:             getStats        84.6%
+github.com/krkhan/go-std-server/main.go:111:            ServeHTTP       100.0%
+github.com/krkhan/go-std-server/main.go:117:            startHttpServer 72.7%
+github.com/krkhan/go-std-server/main.go:153:            main            0.0%
+github.com/krkhan/go-std-server/router/router.go:15:    NewRoute        100.0%
+github.com/krkhan/go-std-server/router/router.go:43:    Serve           69.6%
+github.com/krkhan/go-std-server/router/router.go:76:    GetParam        100.0%
+github.com/krkhan/go-std-server/store/store.go:19:      AddDigest       100.0%
+github.com/krkhan/go-std-server/store/store.go:31:      GetDigest       100.0%
+total:                                                  (statements)    66.1%
 ```
 
 ## Launching the server
@@ -154,7 +185,7 @@ k9w4qLUoXzJEUp6TXTL59Vhjq1g600F0Va9v/VLkNeegC7Oro7kh/AIMU20+RlnG4fBDdfmv9qY4NHc5
 curl http://127.0.0.1:8080/stats
 ```
 ```
-{"total": "6", "average": "104"}
+{"total": 4, "average": 113}
 ```
 Please note that since the hashes are calculated asynchronously, the average is just for the time servicing the HTTP request that triggered the SHA512 calculation. In other words, the hash performance itself is not part of the stats. (Not sure about requirements here, it can easily be tweaked to measure hash performance instead.)
 
