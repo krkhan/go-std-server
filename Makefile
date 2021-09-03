@@ -24,6 +24,9 @@ build: ## Build your project and put the output binary in out/bin/
 	mkdir -p out/bin
 	GO111MODULE=on $(GOCMD) build -mod vendor -o out/bin/$(BINARY_NAME) .
 
+run: build ## Execute server binary with default arguments
+	out/bin/${BINARY_NAME}
+
 clean: ## Remove build related file
 	rm -fr ./bin
 	rm -fr ./out

@@ -16,6 +16,7 @@ Usage:
 Targets:
   Build:
     build               Build your project and put the output binary in out/bin/
+    run                 Execute server binary with default arguments
     clean               Remove build related file
     vendor              Copy of all packages needed to support builds and tests in the vendor directory
     watch               Run the code with cosmtrek/air to have automatic reload on changes
@@ -77,6 +78,12 @@ ok      github.com/krkhan/go-std-server/store   10.099s
 ```
 
 ## Launching the server
+
+```
+$ make run
+```
+
+Or, if you want to launch the executable manually:
 
 ```
 $ go-std-server [listen address (default ":8080")]
