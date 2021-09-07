@@ -45,43 +45,43 @@ go test -v -race ./...
 === RUN   TestHTTPServer
 === RUN   TestHTTPServer/stats_request_without_any_traffic
     main_test.go:40: Making GET call to http://127.0.0.1:40162/stats
-2021/09/07 13:28:33 GET request from 127.0.0.1:41104 for URL: /stats
+2021/09/07 14:58:15 Handled GET request from 127.0.0.1:41512 for URL '/stats', response: OK
 === RUN   TestHTTPServer/valid_hash_request
     main_test.go:46: Making POST call to http://127.0.0.1:40162/hash with 20 bytes in body
-2021/09/07 13:28:33 POST request from 127.0.0.1:41104 for URL: /hash
+2021/09/07 14:58:15 Handled POST request from 127.0.0.1:41512 for URL '/hash', response: OK
 === RUN   TestHTTPServer/multiple_passwords
     main_test.go:46: Making POST call to http://127.0.0.1:40162/hash with 44 bytes in body
-2021/09/07 13:28:33 POST request from 127.0.0.1:41104 for URL: /hash
-2021/09/07 13:28:33 Multiple (2) passwords provided
---- PASS: TestHTTPServer (3.01s)
-    --- PASS: TestHTTPServer/stats_request_without_any_traffic (0.00s)
+2021/09/07 14:58:15 Multiple (2) passwords provided
+2021/09/07 14:58:15 Handled POST request from 127.0.0.1:41512 for URL '/hash', response: Bad Request
+--- PASS: TestHTTPServer (3.02s)
+    --- PASS: TestHTTPServer/stats_request_without_any_traffic (0.01s)
     --- PASS: TestHTTPServer/valid_hash_request (0.00s)
     --- PASS: TestHTTPServer/multiple_passwords (0.00s)
 === RUN   TestDelay
-2021/09/07 13:28:33 POST request from 127.0.0.1:54020 for URL: /hash
-2021/09/07 13:28:33 GET request from 127.0.0.1:54020 for URL: /hash/1
-2021/09/07 13:28:33 Key not found: 1
-2021/09/07 13:28:38 GET request from 127.0.0.1:54020 for URL: /hash/1
---- PASS: TestDelay (5.01s)
+2021/09/07 14:58:15 Handled POST request from 127.0.0.1:54428 for URL '/hash', response: OK
+2021/09/07 14:58:15 Key not found: 1
+2021/09/07 14:58:15 Handled GET request from 127.0.0.1:54428 for URL '/hash/1', response: Bad Request
+2021/09/07 14:58:20 Handled GET request from 127.0.0.1:54428 for URL '/hash/1', response: OK
+--- PASS: TestDelay (5.02s)
 PASS
-ok      github.com/krkhan/go-std-server 8.055s
+ok      github.com/krkhan/go-std-server 8.080s
 === RUN   TestRouter
 === RUN   TestRouter/get_request_without_any_parameters
-2021/09/07 13:28:30 GET request from  for URL: /
+2021/09/07 14:58:12 Handled GET request from  for URL '/', response: OK
 === RUN   TestRouter/post_request_without_any_parameters
-2021/09/07 13:28:30 POST request from  for URL: /profilePicture
+2021/09/07 14:58:12 Handled POST request from  for URL '/profilePicture', response: OK
 === RUN   TestRouter/get_request_with_a_numeric_parameter
-2021/09/07 13:28:30 GET request from  for URL: /profile/12345
+2021/09/07 14:58:12 Handled GET request from  for URL '/profile/12345', response: OK
 --- PASS: TestRouter (0.00s)
     --- PASS: TestRouter/get_request_without_any_parameters (0.00s)
     --- PASS: TestRouter/post_request_without_any_parameters (0.00s)
     --- PASS: TestRouter/get_request_with_a_numeric_parameter (0.00s)
 PASS
-ok      github.com/krkhan/go-std-server/router  0.030s
+ok      github.com/krkhan/go-std-server/router  0.029s
 === RUN   TestSha512DigestStore
---- PASS: TestSha512DigestStore (10.04s)
+--- PASS: TestSha512DigestStore (10.03s)
 PASS
-ok      github.com/krkhan/go-std-server/store   10.071s
+ok      github.com/krkhan/go-std-server/store   10.056s
 ```
 
 You can get a coverage report via:
@@ -123,17 +123,17 @@ Or, if you want to launch the executable manually:
 $ go-std-server [listen address (default ":8080")]
 ```
 ```
-2021/09/07 13:29:53 Launching HTTP server on :8080
-2021/09/07 13:30:03 POST request from 127.0.0.1:57534 for URL: /hash
-2021/09/07 13:30:05 POST request from 127.0.0.1:57536 for URL: /hash
-2021/09/07 13:30:07 GET request from 127.0.0.1:57538 for URL: /hash/1
-2021/09/07 13:30:07 Key not found: 1
-2021/09/07 13:30:08 GET request from 127.0.0.1:57540 for URL: /hash/2
-2021/09/07 13:30:08 Key not found: 2
-2021/09/07 13:30:12 GET request from 127.0.0.1:57542 for URL: /hash/1
-2021/09/07 13:30:13 GET request from 127.0.0.1:57544 for URL: /hash/2
-^C2021/09/07 13:30:21 Received signal 'interrupt', shutting down HTTP server
-2021/09/07 13:30:21 HTTP server terminated successfully
+2021/09/07 15:01:39 Launching HTTP server on :8080
+2021/09/07 15:01:46 Handled POST request from 127.0.0.1:58096 for URL '/hash', response: OK
+2021/09/07 15:01:47 Handled POST request from 127.0.0.1:58098 for URL '/hash', response: OK
+2021/09/07 15:01:50 Key not found: 1
+2021/09/07 15:01:50 Handled GET request from 127.0.0.1:58100 for URL '/hash/1', response: Bad Request
+2021/09/07 15:01:51 Key not found: 2
+2021/09/07 15:01:51 Handled GET request from 127.0.0.1:58102 for URL '/hash/2', response: Bad Request
+2021/09/07 15:01:57 Handled GET request from 127.0.0.1:58104 for URL '/hash/1', response: OK
+2021/09/07 15:01:58 Handled GET request from 127.0.0.1:58106 for URL '/hash/2', response: OK
+^C2021/09/07 15:02:00 Received signal 'interrupt', shutting down HTTP server
+2021/09/07 15:02:00 HTTP server terminated successfully
 ```
 
 ## Client Examples

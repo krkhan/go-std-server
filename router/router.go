@@ -41,6 +41,20 @@ type Route struct {
 	Stats   *RouteStats
 }
 
+type LoggingResponseWriter struct {
+	http.ResponseWriter
+	statusCode int
+}
+
+func NewLoggingResponseWriter(w http.ResponseWriter) *LoggingResponseWriter {
+	return &LoggingResponseWriter{w, http.StatusOK}
+}
+
+func (lrw *LoggingResponseWriter) WriteHeader(code int) {
+	lrw.statusCode = code
+	lrw.ResponseWriter.WriteHeader(code)
+}
+
 func Serve(routes []Route, w http.ResponseWriter, r *http.Request) {
 	var disallowedMethods []string
 	for _, route := range routes {
@@ -50,12 +64,13 @@ func Serve(routes []Route, w http.ResponseWriter, r *http.Request) {
 				disallowedMethods = append(disallowedMethods, route.Method)
 				continue
 			}
-			log.Printf("%s request from %s for URL: %s", r.Method, r.RemoteAddr, r.URL)
 			ctx := context.WithValue(r.Context(), ContextKey{}, matches[1:])
+			lrw := NewLoggingResponseWriter(w)
 			handlerStart := time.Now()
-			route.Handler(w, r.WithContext(ctx))
+			route.Handler(lrw, r.WithContext(ctx))
 			handlerEnd := time.Now()
 			elapsedMicroseconds := handlerEnd.Sub(handlerStart).Microseconds()
+			log.Printf("Handled %s request from %s for URL '%s', response: %s", r.Method, r.RemoteAddr, r.URL, http.StatusText(lrw.statusCode))
 			go func() {
 				// Probably not needed for the time being (stuff we are tracking can be atomically increased)
 				// But can be helpful for tracking more complex stats
