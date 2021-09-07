@@ -2,6 +2,7 @@ package router
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"regexp"
 	"strings"
@@ -14,7 +15,7 @@ type ContextKey struct{}
 
 func NewRoute(name, method, pattern string, handler http.HandlerFunc) Route {
 	return Route{
-		Name: name,
+		Name:    name,
 		Method:  method,
 		Regex:   regexp.MustCompile("^" + pattern + "$"),
 		Handler: handler,
@@ -49,6 +50,7 @@ func Serve(routes []Route, w http.ResponseWriter, r *http.Request) {
 				disallowedMethods = append(disallowedMethods, route.Method)
 				continue
 			}
+			log.Printf("%s request from %s for URL: %s", r.Method, r.RemoteAddr, r.URL)
 			ctx := context.WithValue(r.Context(), ContextKey{}, matches[1:])
 			handlerStart := time.Now()
 			route.Handler(w, r.WithContext(ctx))

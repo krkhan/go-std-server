@@ -30,8 +30,6 @@ func handleError(msg string, w http.ResponseWriter) {
 }
 
 func postHash(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Handling POST /hash")
-
 	err := r.ParseForm()
 	if err != nil {
 		msg := fmt.Sprintf("Error parsing request body: %s", err)
@@ -68,8 +66,6 @@ func getHash(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Handling GET /hash key=%d", key)
-
 	reqStore := r.Context().Value(store.Sha512DigestStoreContextKey{}).(*store.Sha512DigestStore)
 	digest, ok := reqStore.GetDigest(key)
 	if !ok {
@@ -83,7 +79,6 @@ func getHash(w http.ResponseWriter, r *http.Request) {
 }
 
 func getStats(w http.ResponseWriter, r *http.Request) {
-	log.Print("Handling GET /stats")
 	routes := r.Context().Value(RoutesContextKey{}).([]router.Route)
 	for _, route := range routes {
 		if route.Name == "POST:hash" {
