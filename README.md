@@ -92,23 +92,25 @@ $ make coverage
 
 ```
 go test -cover -covermode=count -coverprofile=profile.cov ./...
-ok      github.com/krkhan/go-std-server 9.025s  coverage: 58.8% of statements
-ok      github.com/krkhan/go-std-server/router  0.013s  coverage: 73.1% of statements
-ok      github.com/krkhan/go-std-server/store   10.008s coverage: 100.0% of statements
+ok      github.com/krkhan/go-std-server 8.539s  coverage: 57.3% of statements
+ok      github.com/krkhan/go-std-server/router  0.013s  coverage: 71.0% of statements
+ok      github.com/krkhan/go-std-server/store   10.009s coverage: 100.0% of statements
 go tool cover -func profile.cov
-github.com/krkhan/go-std-server/main.go:26:             handleError     100.0%
-github.com/krkhan/go-std-server/main.go:32:             postHash        68.4%
-github.com/krkhan/go-std-server/main.go:62:             getHash         80.0%
-github.com/krkhan/go-std-server/main.go:85:             getStats        84.6%
-github.com/krkhan/go-std-server/main.go:111:            ServeHTTP       100.0%
-github.com/krkhan/go-std-server/main.go:117:            startHttpServer 72.7%
-github.com/krkhan/go-std-server/main.go:153:            main            0.0%
-github.com/krkhan/go-std-server/router/router.go:15:    NewRoute        100.0%
-github.com/krkhan/go-std-server/router/router.go:43:    Serve           69.6%
-github.com/krkhan/go-std-server/router/router.go:76:    GetParam        100.0%
-github.com/krkhan/go-std-server/store/store.go:19:      AddDigest       100.0%
-github.com/krkhan/go-std-server/store/store.go:31:      GetDigest       100.0%
-total:                                                  (statements)    66.1%
+github.com/krkhan/go-std-server/main.go:26:             handleError                     100.0%
+github.com/krkhan/go-std-server/main.go:32:             postHash                        66.7%
+github.com/krkhan/go-std-server/main.go:60:             getHash                         78.6%
+github.com/krkhan/go-std-server/main.go:81:             getStats                        83.3%
+github.com/krkhan/go-std-server/main.go:106:            ServeHTTP                       100.0%
+github.com/krkhan/go-std-server/main.go:112:            startHttpServer                 72.7%
+github.com/krkhan/go-std-server/main.go:148:            main                            0.0%
+github.com/krkhan/go-std-server/router/router.go:16:    NewRoute                        100.0%
+github.com/krkhan/go-std-server/router/router.go:49:    NewLoggingResponseWriter        100.0%
+github.com/krkhan/go-std-server/router/router.go:53:    WriteHeader                     0.0%
+github.com/krkhan/go-std-server/router/router.go:58:    Serve                           72.0%
+github.com/krkhan/go-std-server/router/router.go:93:    GetParam                        100.0%
+github.com/krkhan/go-std-server/store/store.go:19:      AddDigest                       100.0%
+github.com/krkhan/go-std-server/store/store.go:31:      GetDigest                       100.0%
+total:                                                  (statements)                    65.1%
 ```
 
 ## Launching the server
